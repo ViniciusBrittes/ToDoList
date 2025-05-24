@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lista de Tarefas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Lista de Tarefas</h1>
+    <button id="toggle-dark">🌙 Modo Escuro</button>
+
+    <!-- Área de entrada de dados -->
+    <div class="input-container">
+      <input type="text" id="task-input" placeholder="Digite uma nova tarefa..." />
+      <button onclick="addTask()">+</button>
+    </div>
+
+    <!-- Lista de tarefas -->
+    <ul id="task-list"></ul>
+  </div>
+
+  <!-- Importa o script JavaScript que controla o comportamento da aplicação -->
+  <script src="script.js"></script>
+</body>
+</html>
