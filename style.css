@@ -78,6 +78,18 @@ input[type="text"] {
   border-radius: 5px;
 }
 
+input[type="date"] {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+body.dark input[type="date"] {
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+}
+
 /* Botão de adicionar tarefa */
 button {
   padding: 0.5rem 1rem;
