@@ -18,11 +18,21 @@
       <button onclick="addTask()">Adicionar</button>
     </div>
 
-    <!-- Lista de tarefas -->
+    <!-- Lista de tarefas (não utilizada diretamente, mas mantida) -->
     <ul id="task-list"></ul>
   </div>
 
-  <!-- Importa o script JavaScript que controla o comportamento da aplicação -->
+  <div class="task-column">
+  <h3>📝 Em Progresso (<span id="count-active">0</span>)</h3>
+  <ul id="task-list-active"></ul>
+</div>
+
+<div class="task-column">
+  <h3>✅ Concluídas (<span id="count-completed">0</span>)</h3>
+  <ul id="task-list-completed"></ul>
+  <button id="clear-completed" class="clear-btn"> Limpar </button>
+</div>
+
   <script src="script.js"></script>
 </body>
 </html>

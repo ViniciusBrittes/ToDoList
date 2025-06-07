@@ -1,47 +1,30 @@
-// Referência aos elementos HTML
-const taskInput = document.getElementById("task-input");
-const taskList = document.getElementById("task-list");
-const taskDate = document.getElementById("task-date");
-
-
-
-// Carrega tarefas armazenadas ao iniciar a aplicação
-function loadTasks() {
-  // Recupera os dados do localStorage (ou lista vazia)
-  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  // Recupera o darkmode pelo localStorage
-  if (localStorage.getItem("darkMode") === "enabled") {
+// Aplica dark mode logo ao carregar
+if (localStorage.getItem("darkMode") === "enabled") {
   document.body.classList.add("dark");
 }
-  // Para cada tarefa, adiciona à interface
-  tasks.forEach(task => addTaskToDOM(task.text, task.completed, task.date));
 
-}
+// Referência aos elementos HTML
+const taskInput = document.getElementById("task-input");
+const taskDate = document.getElementById("task-date");
+const taskListActive = document.getElementById("task-list-active");
+const taskListCompleted = document.getElementById("task-list-completed");
 
-// Ativa/desativa dark mode
+// Dark mode toggle
 document.getElementById("toggle-dark").addEventListener("click", () => {
   document.body.classList.toggle("dark");
-
-  // Salva preferência no localStorage
   const isDark = document.body.classList.contains("dark");
   localStorage.setItem("darkMode", isDark ? "enabled" : "disabled");
 });
 
-// Permite adicionar a tarefa pressionando Enter
+// Enter adiciona tarefa
 taskInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    addTask();
-  }
+  if (e.key === "Enter") addTask();
 });
 
-// Adiciona nova tarefa quando o botão é clicado
 function addTask() {
   const text = taskInput.value.trim();
-  
-  const date = taskDate.value; // Formato YYYY-MM-DD
-
+  const date = taskDate.value;
   if (text === "") return;
-
   addTaskToDOM(text, false, date);
   saveTask(text, date);
   taskInput.value = "";
@@ -54,15 +37,20 @@ function formatDateBR(isoDate) {
   return `${day}/${month}/${year.slice(2)}`;
 }
 
-// Cria visualmente um novo item na lista
+document.getElementById("clear-completed").addEventListener("click", () => {
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks = tasks.filter(task => !task.completed);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  renderTasks();
+});
+
 function addTaskToDOM(text, completed = false, date = "") {
   const li = document.createElement("li");
 
   const span = document.createElement("span");
   span.textContent = text;
 
-  // Exibe a data, se houver
-  if (date && date !== "") {
+  if (date) {
     const small = document.createElement("small");
     small.textContent = ` (📅 ${formatDateBR(date)})`;
     span.appendChild(small);
@@ -72,25 +60,36 @@ function addTaskToDOM(text, completed = false, date = "") {
 
   li.appendChild(span);
 
-  li.addEventListener("click", () => {
-    li.classList.toggle("completed");
-    updateLocalStorage();
-  });
+  const actionBtn = document.createElement("button");
 
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "🗑️";
-  deleteBtn.onclick = (e) => {
-    e.stopPropagation();
-    li.remove();
-    updateLocalStorage();
-  };
+  if (completed) {
+    actionBtn.textContent = "🗑️";
+    actionBtn.title = "Excluir";
+    actionBtn.onclick = (e) => {
+      e.stopPropagation();
+      li.remove();
+      updateLocalStorage();
+    };
+  } else {
+    actionBtn.textContent = "✅";
+    actionBtn.title = "Concluir";
+    actionBtn.onclick = (e) => {
+      e.stopPropagation();
+      li.classList.add("completed");
+      updateLocalStorage();
+      renderTasks(); // move tarefa
+    };
+  }
 
-  li.appendChild(deleteBtn);
-  taskList.appendChild(li);
+  li.appendChild(actionBtn);
+
+  if (completed) {
+    taskListCompleted.appendChild(li);
+  } else {
+    taskListActive.appendChild(li);
+  }
 }
 
-
-// Salva nova tarefa no localStorage
 function saveTask(text, date) {
   const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
   tasks.push({ text, completed: false, date });
@@ -99,22 +98,51 @@ function saveTask(text, date) {
 
 function updateLocalStorage() {
   const tasks = [];
-
   document.querySelectorAll("li").forEach(li => {
     const span = li.querySelector("span");
     const dateText = span.querySelector("small")?.textContent || "";
-    const date = dateText.match(/\d{4}-\d{2}-\d{2}/)?.[0] || "";
-
+    const dateMatch = dateText.match(/\d{2}\/\d{2}\/\d{2}/);
+    const date = dateMatch ? formatDateISO(dateMatch[0]) : "";
     tasks.push({
       text: span.firstChild.textContent,
       completed: li.classList.contains("completed"),
       date
     });
   });
-
   localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function formatDateISO(dateBR) {
+  const [day, month, year] = dateBR.split("/");
+  return `20${year}-${month}-${day}`;
+}
+
+function renderTasks() {
+  taskListActive.innerHTML = "";
+  taskListCompleted.innerHTML = "";
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  let countActive = 0;
+  let countCompleted = 0;
+
+  tasks.forEach(task => {
+    addTaskToDOM(task.text, task.completed, task.date);
+    task.completed ? countCompleted++ : countActive++;
+  });
+
+  // Atualiza contadores no DOM
+  document.getElementById("count-active").textContent = countActive;
+  document.getElementById("count-completed").textContent = countCompleted;
+
+  // Exibe ou oculta botão "Limpar"
+  document.getElementById("clear-completed").style.display =
+    countCompleted > 0 ? "block" : "none";
+
+  document.getElementById("count-active").textContent = tasks.filter(t => !t.completed).length;
+  document.getElementById("count-completed").textContent = tasks.filter(t => t.completed).length;
 }
 
 
 // Executa ao carregar a página
 loadTasks();
+renderTasks();
+
