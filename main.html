@@ -11,27 +11,33 @@
     <h1>📝 Lista de Tarefas</h1>
     <button id="toggle-dark">🌙 Modo Escuro</button>
 
-    <!-- Área de entrada de dados -->
-    <div class="input-container">
-      <input type="text" id="task-input" placeholder="Digite uma nova tarefa..." />
-      <input type="date" id="task-date" />
-      <button onclick="addTask()">Adicionar</button>
+    <!-- Área de entrada e colunas agrupadas -->
+    <div class="columns">
+
+      <!-- Área de entrada -->
+      <div class="task-column" style="flex: 1 1 300px; max-width: 350px;">
+        <h3>➕ Nova Tarefa</h3>
+        <div class="input-container">
+          <input type="text" id="task-input" placeholder="Digite uma nova tarefa..." />
+          <input type="date" id="task-date" />
+          <button onclick="addTask()">Adicionar</button>
+        </div>
+      </div>
+
+      <!-- Em Progresso -->
+      <div class="task-column">
+        <h3>📝 Em Progresso (<span id="count-active">0</span>)</h3>
+        <ul id="task-list-active"></ul>
+      </div>
+
+      <!-- Concluídas -->
+      <div class="task-column">
+        <h3>✅ Concluídas (<span id="count-completed">0</span>)</h3>
+        <ul id="task-list-completed"></ul>
+        <button id="clear-completed" class="clear-btn">Limpar</button>
+      </div>
     </div>
-
-    <!-- Lista de tarefas (não utilizada diretamente, mas mantida) -->
-    <ul id="task-list"></ul>
   </div>
-
-  <div class="task-column">
-  <h3>📝 Em Progresso (<span id="count-active">0</span>)</h3>
-  <ul id="task-list-active"></ul>
-</div>
-
-<div class="task-column">
-  <h3>✅ Concluídas (<span id="count-completed">0</span>)</h3>
-  <ul id="task-list-completed"></ul>
-  <button id="clear-completed" class="clear-btn"> Limpar </button>
-</div>
 
   <script src="script.js"></script>
 </body>

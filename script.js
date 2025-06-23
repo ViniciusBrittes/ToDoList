@@ -29,6 +29,8 @@ function addTask() {
   saveTask(text, date);
   taskInput.value = "";
   taskDate.value = "";
+
+  renderTasks();
 }
 
 function formatDateBR(isoDate) {
@@ -136,13 +138,10 @@ function renderTasks() {
   // Exibe ou oculta botão "Limpar"
   document.getElementById("clear-completed").style.display =
     countCompleted > 0 ? "block" : "none";
-
-  document.getElementById("count-active").textContent = tasks.filter(t => !t.completed).length;
-  document.getElementById("count-completed").textContent = tasks.filter(t => t.completed).length;
 }
 
 
+
 // Executa ao carregar a página
-loadTasks();
 renderTasks();
 
